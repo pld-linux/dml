@@ -5,7 +5,7 @@ Version:	0.1.2
 Release:	1
 License:	GPL
 Group:		Applications/Terminal
-Source0:	ftp://ftp.pld.org.pl/people/malekith/%{name}/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.pld-linux.org/people/malekith/%{name}/%{name}-%{version}.tar.gz
 # Source0-md5:	64d5f5666b28d06ef2593eae4b363bd7
 BuildRequires:	slang-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
