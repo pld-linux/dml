@@ -32,16 +32,23 @@ Tool for displaying dialogs from shell. Bootdisk version.
 %setup -q
 
 %build
-%configure
-%{__make}
-(cd src; %{__make} small)
+#autoheader
+automake --add-missing
+autoconf 
+
+# --disable-nls does not really work - cannot compile against uClibc
+%configure --disable-nls
+%{__make} \
+	CFLAGS="-I%{_libdir}/bootdisk%{_includedir}" \
+	LDFLAGS="-nostdlib -s" \
+	LIBS="%{_libdir}/bootdisk%{_libdir}/crt0.o %{_libdir}/bootdisk%{_libdir}/libc.a -lgcc"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT 
 install -d -m 755 $RPM_BUILD_ROOT/usr/lib/bootdisk/bin
-install -m 755 src/dml-install $RPM_BUILD_ROOT/usr/lib/bootdisk/bin/dml
+install -m 755 src/dml $RPM_BUILD_ROOT/usr/lib/bootdisk/bin/dml
 
 #gzip -9nf AUTHORS TODO ChangeLog
 
