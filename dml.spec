@@ -69,7 +69,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{?BOOT:1}%{!?BOOT:0}
 install -d $RPM_BUILD_ROOT/usr/lib/bootdisk/bin
-install -s dml-BOOT $RPM_BUILD_ROOT/usr/lib/bootdisk/bin/dml
+install dml-BOOT $RPM_BUILD_ROOT/usr/lib/bootdisk/bin/dml
 %endif
 
 gzip -9nf AUTHORS TODO NEWS README ChangeLog
