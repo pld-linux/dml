@@ -19,15 +19,14 @@ Tool for displaying dialogs from shell.
 %description -l pl
 Narzêdzie do wy¶wietlania okien dialogowych z shella.
 
-%package -n BOOT
+%package BOOT
 Summary:	Tool for displaying dialogs from shell - BOOT
 Summary(pl):	Narzêdzie do wy¶wietlania okien dialogowych z shella -BOOT
-Name:		dml
 Group:		Applications/Terminal
 Group(de):	Applikationen/Terminal
 Group(pl):	Aplikacje/Terminal
 
-%description
+%description BOOT
 Tool for displaying dialogs from shell. Bootdisk version.
 
 %prep
@@ -42,7 +41,7 @@ Tool for displaying dialogs from shell. Bootdisk version.
 rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT 
-install -m 755 $RPM_BUILD_ROOT/usr/lib/bootdisk/am/bin
+install -d -m 755 $RPM_BUILD_ROOT/usr/lib/bootdisk/am/bin
 install -m 755 src/dml-install $RPM_BUILD_ROOT/usr/lib/bootdisk/am/bin/dml
 
 #gzip -9nf AUTHORS TODO ChangeLog
@@ -55,6 +54,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/*
 %{_mandir}/*
 
-%files -n BOOT
+%files BOOT
 %defattr(644,root,root,755)
 %attr(755,root,root) /usr/lib/bootdisk/am/bin/dml
