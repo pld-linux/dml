@@ -3,9 +3,9 @@ Summary(pl):	Narzêdzie do wy¶wietlania okien dialogowych z shella
 Name:		dml
 Version:	0.1.6
 Release:	1
-License:	GPL
+License:	GPL v2
 Group:		Applications/Terminal
-Source0:	ftp://ftp.pld-linux.org/people/malekith/%{name}/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.pld-linux.org/people/malekith/dml/%{name}-%{version}.tar.gz
 # Source0-md5:	1862186f09b0c82fd69c50364fbbd638
 BuildRequires:	slang-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
