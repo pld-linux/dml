@@ -1,14 +1,13 @@
 Summary:	Tool for displaying dialogs from shell
 Summary(pl):	Narzêdzie do wy¶wietlania okien dialogowych z shella
 Name:		dml
-Version:	0.0.13
-Release:	2
+Version:	0.0.14
+Release:	1
 License:	GPL
 Group:		Applications/Terminal
 Group(de):	Applikationen/Terminal
 Group(pl):	Aplikacje/Terminal
 Source0:	ftp://ftp.pld.org.pl/people/malekith/%{name}-%{version}.tar.gz
-Patch0:		%{name}-no_new_am.patch
 BuildRequires:	autoconf
 BuildRequires:	automake
 %if %{?BOOT:1}%{!?BOOT:0}
@@ -38,7 +37,6 @@ Tool for displaying dialogs from shell. Bootdisk version.
 
 %prep
 %setup -q
-%patch -p1
 
 %build
 autoheader
