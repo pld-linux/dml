@@ -47,7 +47,7 @@ Tool for displaying dialogs from shell. Bootdisk version.
 
 %configure --disable-nls
 %{__make} -C src \
-	CFLAGS="-I%{_libdir}/bootdisk%{_includedir} " \
+	CFLAGS="-m386 -I%{_libdir}/bootdisk%{_includedir}" \
 	LDFLAGS="-nostdlib -static -s" \
 	LDADD="	%{_libdir}/bootdisk%{_libdir}/libslang.a \
 		%{_libdir}/bootdisk%{_libdir}/crt0.o \
