@@ -8,8 +8,8 @@ Group:		Applications/Terminal
 Group(de):	Applikationen/Terminal
 Group(pl):	Aplikacje/Terminal
 Source0:	ftp://ftp.pld.org.pl/people/malekith/%{name}-%{version}.tar.gz
-BuildRequires:	slang-static
-BuildRequires:	gettext-devel
+BuildRequires:	slang-devel-BOOT
+#BuildRequires:	gettext-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -32,16 +32,27 @@ Tool for displaying dialogs from shell. Bootdisk version.
 %setup -q
 
 %build
-#autoheader
+autoheader
 automake --add-missing
 autoconf 
 
-# --disable-nls does not really work - cannot compile against uClibc
 %configure --disable-nls
-%{__make} \
-	CFLAGS="-I%{_libdir}/bootdisk%{_includedir}" \
-	LDFLAGS="-nostdlib -s" \
-	LIBS="%{_libdir}/bootdisk%{_libdir}/crt0.o %{_libdir}/bootdisk%{_libdir}/libc.a -lgcc"
+
+# uClibc does not have two functions referenced in libslang
+# they are not critical for bootdisk, let's create some fake ones
+cat <<EOF >src/setsf.c
+int setfsuid (void *foo) { return 0; }
+int setfsgid (void *foo) { return 0; }
+EOF
+( cd src; gcc -c setsf.c; )
+
+%{__make} -C src \
+	CFLAGS="-I%{_libdir}/bootdisk%{_includedir} " \
+	LDFLAGS="-nostdlib -static -s" \
+	LDADD="setsf.o  \
+		%{_libdir}/bootdisk%{_libdir}/libslang.a \
+		%{_libdir}/bootdisk%{_libdir}/crt0.o \
+		%{_libdir}/bootdisk%{_libdir}/libc.a -lgcc "
 
 %install
 rm -rf $RPM_BUILD_ROOT
