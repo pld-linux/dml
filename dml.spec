@@ -42,13 +42,17 @@ Group(pl):	Aplikacje/Terminal
 %description embed
 Tool for displaying dialogs from shell. Bootdisk version.
 
+%description embed -l pl
+Narzêdzie do wy¶wietlania okien dialogowych z shella. Wersja na
+bootkietkê.
+
 %prep
 %setup -q
 
 %build
 autoheader
 aclocal
-autoconf 
+autoconf
 automake -a -c
 
 %if %{!?_without_embed:1}%{?_without_embed:0}
@@ -73,7 +77,7 @@ mv -f src/dml dml-static
 %install
 rm -rf $RPM_BUILD_ROOT
 %{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT 
+	DESTDIR=$RPM_BUILD_ROOT
 
 %if %{!?_without_embed:1}%{?_without_embed:0}
 install -d $RPM_BUILD_ROOT%{embed_path}/{shared,static}
