@@ -1,0 +1,6 @@
+--- dml-0.0.11/Makefile.am~	Tue May 15 18:37:26 2001
++++ dml-0.0.11/Makefile.am	Mon Jul 16 22:57:24 2001
+@@ -1,2 +1,2 @@
+-AUTOMAKE_OPTIONS = dist-bzip2
++#AUTOMAKE_OPTIONS = dist-bzip2
+ SUBDIRS = doc src intl po
