@@ -27,7 +27,7 @@ Narzêdzie do wy¶wietlania okien dialogowych z shella.
 autoheader
 aclocal
 autoconf
-automake -a -c
+automake -a -c -f
 
 %configure %{?_without_nls:--disable-nls}
 %{__make}
