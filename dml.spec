@@ -1,7 +1,7 @@
 Summary:	Tool for displaying dialogs from shell
 Summary(pl):	Narzêdzie do wy¶wietlania okien dialogowych z shella
 Name:		dml
-Version:	0.0.11
+Version:	0.0.12
 Release:	2
 License:	GPL
 Group:		Applications/Terminal
