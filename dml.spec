@@ -3,7 +3,6 @@ Summary(pl):	Narzêdzie do wy¶wietlania okien dialogowych z shella
 Name:		dml
 Version:	0.0.3
 Release:	1
-Epoch:		1
 License:	GPL
 Group:		Applications/Terminal
 Group(de):	Applikationen/Terminal
@@ -52,7 +51,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/*
-%{_mandir}/*
+%{_mandir}/man1/*
 
 %files BOOT
 %defattr(644,root,root,755)
