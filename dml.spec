@@ -43,7 +43,7 @@ Tool for displaying dialogs from shell. Bootdisk version.
 %if %{?BOOT:1}%{!?BOOT:0}
 #autoheader
 #automake --add-missing
-#autoconf 
+autoconf 
 
 %configure --disable-nls
 %{__make} -C src \
@@ -57,6 +57,7 @@ mv -f src/dml dml-BOOT
 %{__make} distclean
 %endif
 
+autoconf
 %configure
 %{__make}
 
