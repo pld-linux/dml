@@ -1,8 +1,10 @@
+# conditional build:
+# --without nls
 Summary:	Tool for displaying dialogs from shell
 Summary(pl):	Narzêdzie do wy¶wietlania okien dialogowych z shella
 Name:		dml
 Version:	0.0.15
-Release:	2
+Release:	3
 License:	GPL
 Group:		Applications/Terminal
 Source0:	ftp://ftp.pld.org.pl/people/malekith/%{name}-%{version}.tar.gz
@@ -11,7 +13,6 @@ BuildRequires:	automake
 BuildRequires:	slang-devel
 BuildRequires:	gettext-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-Requires:	slang
 
 %description
 Tool for displaying dialogs from shell.
@@ -28,7 +29,7 @@ aclocal
 autoconf
 automake -a -c
 
-%configure
+%configure %{?_without_nls:--disable-nls}
 %{__make}
 
 %install
