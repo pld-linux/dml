@@ -40,8 +40,8 @@ Tool for displaying dialogs from shell. Bootdisk version.
 rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT 
-install -d -m 755 $RPM_BUILD_ROOT/usr/lib/bootdisk/am/bin
-install -m 755 src/dml-install $RPM_BUILD_ROOT/usr/lib/bootdisk/am/bin/dml
+install -d -m 755 $RPM_BUILD_ROOT/usr/lib/bootdisk/bin
+install -m 755 src/dml-install $RPM_BUILD_ROOT/usr/lib/bootdisk/bin/dml
 
 #gzip -9nf AUTHORS TODO ChangeLog
 
@@ -55,4 +55,4 @@ rm -rf $RPM_BUILD_ROOT
 
 %files BOOT
 %defattr(644,root,root,755)
-%attr(755,root,root) /usr/lib/bootdisk/am/bin/dml
+%attr(755,root,root) /usr/lib/bootdisk/bin/dml
