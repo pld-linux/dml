@@ -9,8 +9,10 @@ Group(de):	Applikationen/Terminal
 Group(pl):	Aplikacje/Terminal
 Source0:	ftp://ftp.pld.org.pl/people/malekith/%{name}-%{version}.tar.gz
 BuildRequires:	slang-devel-BOOT
+BuildRequires:	slang-devel
 #BuildRequires:	gettext-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+Requires:	slang
 
 %description
 Tool for displaying dialogs from shell.
@@ -53,13 +55,19 @@ EOF
 		%{_libdir}/bootdisk%{_libdir}/libslang.a \
 		%{_libdir}/bootdisk%{_libdir}/crt0.o \
 		%{_libdir}/bootdisk%{_libdir}/libc.a -lgcc "
+mv -f src/dml dml-BOOT
+
+%{__make} distclean
+%configure
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT 
-install -d -m 755 $RPM_BUILD_ROOT/usr/lib/bootdisk/bin
-install -m 755 src/dml $RPM_BUILD_ROOT/usr/lib/bootdisk/bin/dml
+
+install -d $RPM_BUILD_ROOT/usr/lib/bootdisk/bin
+install -s dml-BOOT $RPM_BUILD_ROOT/usr/lib/bootdisk/bin/dml
 
 #gzip -9nf AUTHORS TODO ChangeLog
 
