@@ -9,6 +9,7 @@ Group(de):	Applikationen/Terminal
 Group(pl):	Aplikacje/Terminal
 Source0:	ftp://ftp.pld.org.pl/people/malekith/%{name}-%{version}.tar.gz
 BuildRequires:	slang-devel-BOOT
+BuildRequires:	uClibc-devel-BOOT
 BuildRequires:	slang-devel
 #BuildRequires:	gettext-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -39,20 +40,10 @@ automake --add-missing
 autoconf 
 
 %configure --disable-nls
-
-# uClibc does not have two functions referenced in libslang
-# they are not critical for bootdisk, let's create some fake ones
-cat <<EOF >src/setsf.c
-int setfsuid (void *foo) { return 0; }
-int setfsgid (void *foo) { return 0; }
-EOF
-( cd src; gcc -c setsf.c; )
-
 %{__make} -C src \
 	CFLAGS="-I%{_libdir}/bootdisk%{_includedir} " \
 	LDFLAGS="-nostdlib -static -s" \
-	LDADD="setsf.o  \
-		%{_libdir}/bootdisk%{_libdir}/libslang.a \
+	LDADD="	%{_libdir}/bootdisk%{_libdir}/libslang.a \
 		%{_libdir}/bootdisk%{_libdir}/crt0.o \
 		%{_libdir}/bootdisk%{_libdir}/libc.a -lgcc "
 mv -f src/dml dml-BOOT
