@@ -1,7 +1,7 @@
 Summary:	Tool for displaying dialogs from shell
 Summary(pl):	Narzêdzie do wy¶wietlania okien dialogowych z shella
 Name:		dml
-Version:	0.0.2
+Version:	0.0.3
 Release:	1
 Epoch:		1
 License:	GPL
@@ -19,17 +19,32 @@ Tool for displaying dialogs from shell.
 %description -l pl
 Narzêdzie do wy¶wietlania okien dialogowych z shella.
 
+%package -n BOOT
+Summary:	Tool for displaying dialogs from shell - BOOT
+Summary(pl):	Narzêdzie do wy¶wietlania okien dialogowych z shella -BOOT
+Name:		dml
+Group:		Applications/Terminal
+Group(de):	Applikationen/Terminal
+Group(pl):	Aplikacje/Terminal
+
+%description
+Tool for displaying dialogs from shell. Bootdisk version.
+
 %prep
 %setup -q
 
 %build
 %configure
 %{__make}
+(cd src; %{__make} small)
 
 %install
 rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT 
+install -m 755 $RPM_BUILD_ROOT/usr/lib/bootdisk/am/bin
+install -m 755 src/dml-install $RPM_BUILD_ROOT/usr/lib/bootdisk/am/bin/dml
+
 #gzip -9nf AUTHORS TODO ChangeLog
 
 %clean
@@ -39,3 +54,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/*
 %{_mandir}/*
+
+%files -n BOOT
+%defattr(644,root,root,755)
+%attr(755,root,root) /usr/lib/bootdisk/am/bin/dml
