@@ -41,9 +41,9 @@ Tool for displaying dialogs from shell. Bootdisk version.
 %build
 
 %if %{?BOOT:1}%{!?BOOT:0}
-autoheader
-automake --add-missing
-autoconf 
+#autoheader
+#automake --add-missing
+#autoconf 
 
 %configure --disable-nls
 %{__make} -C src \
