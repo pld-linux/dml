@@ -6,8 +6,6 @@ Version:	0.0.15
 Release:	1
 License:	GPL
 Group:		Applications/Terminal
-Group(de):	Applikationen/Terminal
-Group(pl):	Aplikacje/Terminal
 Source0:	ftp://ftp.pld.org.pl/people/malekith/%{name}-%{version}.tar.gz
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -36,8 +34,6 @@ Narzêdzie do wy¶wietlania okien dialogowych z shella.
 Summary:	Tool for displaying dialogs from shell - BOOT
 Summary(pl):	Narzêdzie do wy¶wietlania okien dialogowych z shella -BOOT
 Group:		Applications/Terminal
-Group(de):	Applikationen/Terminal
-Group(pl):	Aplikacje/Terminal
 
 %description embed
 Tool for displaying dialogs from shell. Bootdisk version.
