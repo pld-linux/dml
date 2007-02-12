@@ -1,5 +1,5 @@
 Summary:	Tool for displaying dialogs from shell
-Summary(pl.UTF-8):   Narzędzie do wyświetlania okien dialogowych z shella
+Summary(pl.UTF-8):	Narzędzie do wyświetlania okien dialogowych z shella
 Name:		dml
 Version:	0.1.6
 Release:	2
