@@ -1,0 +1,101 @@
+--- dml-0.1.6.new/src/slang.c.old	2007-10-04 22:03:19.000000000 +0200
++++ dml-0.1.6.new/src/slang.c	2007-10-04 23:47:06.000000000 +0200
+@@ -34,6 +34,7 @@
+ char *pi_conf_file = "/etc/dml.conf";
+ int pi_screen_height, pi_screen_width;
+ int pi_poor_man_frames = 0;
++int pi_utf8;
+ 
+ struct optiondesc {
+ 	char *element_name;
+@@ -152,11 +153,10 @@
+ 	while (*s && n--) {
+ 		if (*s == '_' && s[1]) {
+ 			pi_color(c2);
+-			pi_putch(*++s);
++			s = pi_putch_utf8(++s);
+ 			pi_color(c1);
+-			s++;
+ 		} else
+-			pi_putch(*s++);
++			s = pi_putch_utf8(s);
+ 	}
+ 
+ 	pi_color(c1);
+@@ -171,11 +171,10 @@
+ 	while (*s && n--) {
+ 		if (*s == '_' && s[1]) {
+ 			pi_color(c2);
+-			pi_putch(*++s);
++			s = pi_putch_utf8(++s);
+ 			pi_color(c1);
+-			s++;
+ 		} else
+-			pi_putch(*s++);
++			s = pi_putch_utf8(s);
+ 	}
+ 	
+ 	pi_color(c1);
+@@ -193,6 +192,7 @@
+ 
+ void pi_init()
+ {
++	SLutf8_enable(pi_utf8);
+ 	SLtt_get_terminfo();
+ 	if (SLkp_init() == -1)
+ 		pi_die("Unable to initialize SLkp.");
+@@ -252,6 +252,17 @@
+ 	SLsmg_write_char((unsigned)c & 0xff);
+ }
+ 
++unsigned char *pi_putch_utf8(unsigned char *c)
++{
++	if (pi_utf8) {
++		SLsmg_write_nstring(c, 1);
++		return SLutf8_skip_char(c, c + 7);
++	} else {
++		pi_putch(*c);
++		return ++c;
++	}
++}
++
+ void pi_addstr(const char *c)
+ {
+ 	SLsmg_write_string((char*)c);
+--- dml-0.1.6.new/src/main.c.old	2007-10-04 23:36:10.000000000 +0200
++++ dml-0.1.6.new/src/main.c	2007-10-04 23:39:06.000000000 +0200
+@@ -14,12 +14,15 @@
+ #include "phash.h"
+ #include <unistd.h>
+ #include <fcntl.h>
++#include <langinfo.h>
++#include <locale.h>
+ #include <string.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ 
+ static char *progie;
+ static int out_fd;
++extern int pi_utf8;
+ 
+ static void usage(int err, char *name)
+ {
+@@ -149,6 +152,8 @@
+ 	int r, i;
+ 	char *tmp;
+ 
++	setlocale(LC_ALL, "");
++	pi_utf8 = !strcmp(nl_langinfo(CODESET), "UTF-8");
+ 	parse_options(argc, argv);
+ 
+ 	/* this is to allow Shift+PgUp to look at displayed error
+--- dml-0.1.6.new/src/pi.h.old	2007-10-04 23:49:16.000000000 +0200
++++ dml-0.1.6.new/src/pi.h	2007-10-04 22:52:59.000000000 +0200
+@@ -229,6 +229,7 @@
+ void pi_goto(int x, int y);
+ void pi_frame(int x, int y, int w, int h);
+ void pi_putch(int c);
++unsigned char *pi_putch_utf8(unsigned char *c);
+ void pi_addstr(const char *c);
+ void pi_addstrn(const char *c, int n);
+ void pi_addstrn_fill(const char *c, int n);
