@@ -2,11 +2,12 @@ Summary:	Tool for displaying dialogs from shell
 Summary(pl.UTF-8):	Narzędzie do wyświetlania okien dialogowych z shella
 Name:		dml
 Version:	0.1.6
-Release:	2
+Release:	3
 License:	GPL v2
 Group:		Applications/Terminal
 Source0:	ftp://ftp.pld-linux.org/people/malekith/dml/%{name}-%{version}.tar.gz
 # Source0-md5:	1862186f09b0c82fd69c50364fbbd638
+Patch0:		%{name}-utf8.patch
 BuildRequires:	slang-devel >= 2.0.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -18,6 +19,7 @@ Narzędzie do wyświetlania okien dialogowych z shella.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %{__make} \
