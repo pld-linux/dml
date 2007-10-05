@@ -8,6 +8,7 @@ Group:		Applications/Terminal
 Source0:	ftp://ftp.pld-linux.org/people/malekith/dml/%{name}-%{version}.tar.gz
 # Source0-md5:	1862186f09b0c82fd69c50364fbbd638
 Patch0:		%{name}-utf8.patch
+Patch1:		%{name}-input_utf8.patch
 BuildRequires:	slang-devel >= 2.0.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -20,6 +21,7 @@ Narzędzie do wyświetlania okien dialogowych z shella.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %{__make} \
