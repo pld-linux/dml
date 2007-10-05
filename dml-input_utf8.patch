@@ -1,0 +1,231 @@
+--- dml-0.1.6/src/pi.h.old	2007-10-05 09:37:17.000000000 +0200
++++ dml-0.1.6/src/pi.h	2007-10-05 10:12:18.000000000 +0200
+@@ -139,7 +139,7 @@
+ 	PI_COMMON_DATA(pi_input);
+ 
+ 	char *buf;
+-	int top, cur, blen;
++	int top, cur, cur_utf8, blen;
+ 	int deadly, pass, res;
+ };
+ 
+@@ -230,6 +230,9 @@
+ void pi_frame(int x, int y, int w, int h);
+ void pi_putch(int c);
+ unsigned char *pi_putch_utf8(unsigned char *c);
++int pi_strlen(char *c);
++char *pi_bskip_char(char *begin, char *c);
++char *pi_skip_char(char *c,  char *end);
+ void pi_addstr(const char *c);
+ void pi_addstrn(const char *c, int n);
+ void pi_addstrn_fill(const char *c, int n);
+--- dml-0.1.6/src/input.c.old	2007-10-05 09:26:45.000000000 +0200
++++ dml-0.1.6/src/input.c	2007-10-05 11:36:12.000000000 +0200
+@@ -11,8 +11,8 @@
+ 
+ void pi_input_draw(struct pi_input *self)
+ {
+-	int i, n, w, a = 0, x, y;
+-	
++	int i, n, n2, w, a = 0, x, y;
++
+ 	pi_locate((struct pi_object*)self, &x, &y);
+ 	
+ 	if ((self->buf[0] == 0) || (self->pass==1)) {
+@@ -20,7 +20,7 @@
+ 		            pi_is_active((struct pi_object*)self) ? 
+ 			      pi_color_input_hl : pi_color_input);
+ 		if (self->buf[0] == 0) 
+-			self->top = self->cur = 0;
++			self->top = self->cur = self->cur_utf8 = 0;
+ 			
+ 		n = self->pos.w;
+ 		
+@@ -35,20 +35,25 @@
+ 		pi_goto(x, y);
+ 		return;
+ 	} 
+-	
++
+ 	n = strlen(self->buf);
++	n2 = pi_strlen(self->buf);
+ 	if (self->top > n)
+ 		self->top = 0;
+ 	if (self->cur > n)
+ 		self->cur = n;
++	if (self->cur_utf8 > n2)
++		self->cur_utf8 = n2;
++
+ 	n -= self->top;
++	n2 -= self->top;
+ 	w = self->pos.w;
+ 	if (self->top) {
+ 		w--;
+ 		pi_color(pi_color_input_arrow);
+ 		pi_putch('<');
+ 	}
+-	if (n > w) {
++	if (n2 > w) {
+ 		w--;	/* for '>' */
+ 		a = 1;
+ 	}
+@@ -58,10 +63,10 @@
+ 		   self->deadly ? 
+ 		     pi_color_input_deadly : 
+ 		       pi_color_input_hl : pi_color_input);
+-	if (n >= w) {
++	if (n2 >= w) {
+ 	        if (self->pass)
+ 		{
+-		  for(n=w;n>0;n--)
++		  for(n2=w;n2>0;n2--)
+ 	            pi_putch('*');
+ 		}
+ 		else
+@@ -74,7 +79,7 @@
+ 	} else {
+ 	        if (self->pass)
+ 		{
+-		  for (i=n;i>0;i--)
++		  for (i=n2;i>0;i--)
+ 		        pi_putch('*');
+ 		}
+ 		else
+@@ -83,11 +88,11 @@
+ 		pi_color(self->ghosted ? pi_color_input_ghosted :
+ 		            pi_is_active((struct pi_object*)self) ? 
+ 			      pi_color_input_hl : pi_color_input);
+-		n = w - n;
+-		while (n--)
++		n2 = w - n2;
++		while (n2--)
+ 			pi_putch(' ');
+ 	}
+-	pi_goto(x + self->cur - self->top + (self->top != 0), y);
++	pi_goto(x + self->cur_utf8 - self->top + (self->top != 0), y);
+ }
+ 
+ void pi_input_kill(struct pi_input *self)
+@@ -105,36 +110,48 @@
+ 
+ void pi_input_key(struct pi_input *self, int key)
+ {
+-	char *p;
++	char *p, *p2;
+ 	int n;
+-	
++
+ 	/* p is char under cursor */
+ 	p = self->buf + self->cur;
+ 		
+ 	switch (key) {
+ 	case pi_key_left:
+-		if (self->cur)
+-			self->cur--;
++		if (self->cur_utf8 > 0) {
++			self->cur_utf8--;
++			p = pi_bskip_char(self->buf, p);
++			self->cur = p - self->buf;
++		}
+ 		break;
+ 	case pi_key_right:
+-		if (*p)
+-			self->cur++;
++		if (*p) {
++			self->cur_utf8++;
++			p = pi_skip_char(p, p + 7);
++			self->cur = p - self->buf;
++		}
+ 		break;
+ 	case '\b':
+ 		if (self->cur == 0)
+ 			break;
+-		self->cur--;
+-		p--;
++		p2 = pi_bskip_char(self->buf, p);
++		self->cur = p2 - self->buf;
++		self->cur_utf8--;
++		memmove(p2, p, strlen(p2));
++		break;
+ 	case pi_key_del:
+-		if (p && *p) 
+-			memmove(p, p + 1, strlen(p));
++		if (p && *p) {
++			p2 = pi_skip_char(p, p + 7); 
++			memmove(p, p2, strlen(p));
++		}
+ 		dead(self);
+ 		break;
+ 	case pi_key_home:
+-		self->cur = 0;
++		self->cur = self->cur_utf8 = 0;
+ 		break;
+ 	case pi_key_end:
+ 		self->cur = strlen(self->buf);
++		self->cur_utf8 = pi_strlen(self->buf);
+ 		break;
+ 	default:
+ 	        if ((key == '\n') && (self->res != 0))
+@@ -152,24 +169,31 @@
+ 			p = self->buf + self->cur;
+ 			memmove(p + 1, p, strlen(p) + 1);
+ 			*p = key;
++
+ 			self->cur++;
++			self->cur_utf8++;
+ 		} else {
+ 			pi_object_key((struct pi_object*)self, key);
+ 			return;
+ 		}
+ 	}
+-	
+ 	if (self->cur > (int)strlen(self->buf))
+-		self->cur = strlen(self->buf);
+-		
++		self->cur = strlen(self->buf);	
++	if (self->cur_utf8 > (int)pi_strlen(self->buf))
++		self->cur_utf8 = pi_strlen(self->buf);
+ 	if (self->cur < 0)
+ 		self->cur = 0;
+ 	if (self->top > self->cur)
+ 		self->top = self->cur;
+-	
+-	if (self->cur - self->top > self->pos.w - 2)
+-		self->top = self->cur - self->pos.w + 2;
+-	else if (self->cur - self->top == self->pos.w - 2 && 
++
++	if (self->cur_utf8 < 0)
++		self->cur_utf8 = 0;
++	if (self->top > self->cur_utf8)
++		self->top = self->cur_utf8;
++	
++	if (self->cur_utf8 - self->top > self->pos.w - 2)
++		self->top = self->cur_utf8 - self->pos.w + 2;
++	else if (self->cur_utf8 - self->top == self->pos.w - 2 && 
+ 		 self->buf[self->cur])
+ 		self->top++;
+ 	self->deadly = 0;
+--- dml-0.1.6/src/slang.c.old	2007-10-05 09:38:02.000000000 +0200
++++ dml-0.1.6/src/slang.c	2007-10-05 11:35:38.000000000 +0200
+@@ -263,6 +263,21 @@
+ 	}
+ }
+ 
++int pi_strlen(char *c)
++{
++	return pi_utf8 ? SLutf8_strlen(c, 0) : strlen(c);
++}
++
++char *pi_bskip_char(char *begin, char *c)
++{
++	return pi_utf8 ? SLutf8_bskip_char(begin, c) : --c;
++}
++
++char *pi_skip_char(char *c, char *end)
++{
++	return pi_utf8 ? SLutf8_skip_char(c, end) : ++c;
++}
++
+ void pi_addstr(const char *c)
+ {
+ 	SLsmg_write_string((char*)c);
