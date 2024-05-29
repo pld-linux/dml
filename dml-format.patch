@@ -1,0 +1,11 @@
+--- dml-0.1.6/src/main.c.orig	2024-05-29 18:34:15.622664112 +0200
++++ dml-0.1.6/src/main.c	2024-05-29 18:35:21.065642910 +0200
+@@ -166,7 +166,7 @@ int main(int argc, char **argv)
+ 		for (i = 0; i < r; i++)
+ 			tmp[i] = '\n';
+ 		tmp[i] = 0;
+-		printf(tmp);
++		fputs(tmp, stdout);
+ 		free(tmp);
+ 	}
+ 		
